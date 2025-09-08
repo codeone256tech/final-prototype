@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        medical: {
+          blue: "hsl(var(--medical-blue))",
+          green: "hsl(var(--medical-green))",
+          red: "hsl(var(--medical-red))",
+          orange: "hsl(var(--medical-orange))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
