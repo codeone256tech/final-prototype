@@ -154,7 +154,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signIn = async (username: string, password: string) => {
     try {
-      // First, get the email from username
+      // Special case for admin login
+      if (username === 'admin' && password === 'admin') {
+        // For admin, we'll create a hardcoded login (you might want to handle this differently in production)
+        const { data: adminProfile, error: adminError } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('username', 'admin')
+          .single();
+
+        if (adminError) {
+          toast({
+            title: "Login failed",
+            description: "Admin account not found",
+            variant: "destructive"
+          });
+          return { error: adminError };
+        }
+
+        // Get admin email and sign in
+        const { data: userData, error: userError } = await supabase.auth.admin.getUserById(adminProfile.user_id);
+        
+        if (userError || !userData.user?.email) {
+          toast({
+            title: "Login failed",
+            description: "Invalid admin credentials",
+            variant: "destructive"
+          });
+          return { error: userError };
+        }
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email: userData.user.email,
+          password
+        });
+
+        if (error) {
+          toast({
+            title: "Login failed",
+            description: "Invalid admin credentials",
+            variant: "destructive"
+          });
+        }
+
+        return { error };
+      }
+
+      // Regular doctor login
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('user_id')
