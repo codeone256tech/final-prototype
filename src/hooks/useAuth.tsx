@@ -116,8 +116,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const redirectUrl = `${window.location.origin}/`;
       
+      // For simplicity, we'll use a consistent email format
+      const userEmail = `${username}@mediscan.ai`;
+      
       const { error } = await supabase.auth.signUp({
-        email,
+        email: userEmail,
         password,
         options: {
           emailRedirectTo: redirectUrl,
@@ -137,7 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         toast({
           title: "Success!",
-          description: "Account created successfully. Please check your email for verification."
+          description: "Account created successfully. You can now log in with your username and password."
         });
       }
 
