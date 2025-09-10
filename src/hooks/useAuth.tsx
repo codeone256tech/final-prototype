@@ -156,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Special case for admin login
       if (username === 'admin' && password === 'admin') {
-        // Use hardcoded admin email for admin login
+        // Use hardcoded admin credentials
         const { error } = await supabase.auth.signInWithPassword({
           email: 'admin@mediscan.ai',
           password: 'admin123'
@@ -173,25 +173,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return { error };
       }
 
-      // Regular doctor login - get email from profiles table
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('username', username)
-        .single();
-
-      if (profileError) {
-        toast({
-          title: "Login failed",
-          description: "Invalid username or password",
-          variant: "destructive"
-        });
-        return { error: profileError };
-      }
-
-      // For doctors, we need to get their email from the profile metadata
-      // Since we can't access auth.users directly, we'll need to store email in profiles
-      // For now, let's use a temporary solution
+      // For regular doctors, we'll use email format based on username
       const { error } = await supabase.auth.signInWithPassword({
         email: `${username}@mediscan.ai`,
         password
